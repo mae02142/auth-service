@@ -38,6 +38,7 @@ public class AuthController {
     // 1. 스포티파이 로그인 URL 반환
     @GetMapping("/login")
     public ResponseEntity<String> login() {
+        System.out.println("1. 스포티파이 로그인 url 반환");
         String spotifyAuthUrl = "https://accounts.spotify.com/authorize" +
                 "?client_id=" + clientId +
                 "&response_type=code" +
@@ -51,11 +52,13 @@ public class AuthController {
     @GetMapping("/callback")
     public void handleCallback(@RequestParam String code, HttpServletResponse response) {
         try {
+            System.out.println("로그인 성공 후 콜백 처리");
             // Access Token 발급 및 사용자 정보 처리
             Map<String, Object> userInfo = authService.processSpotifyCallback(code);
 
             // jwt 토큰 생성
             String jwt = jwtService.createJwtToken(userInfo);
+            System.out.println(jwt);
 
             // 3. JWT를 쿠키에 저장
             Cookie cookie = new Cookie("jwt", jwt);
@@ -78,7 +81,7 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/user-info")
+    @GetMapping("/user-pinia")
     public BaseResponse<Map<String, Object>> getUserInfo(@CookieValue(value = "jwt", required = false) String jwt) {
         if (jwt == null || jwt.isEmpty()) {
             // JWT가 없으면 에러 응답 반환

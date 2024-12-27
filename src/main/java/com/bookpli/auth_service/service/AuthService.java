@@ -32,6 +32,7 @@ public class AuthService {
 
         // 2. Spotify 회원 정보 조회
         UserDTO userDTO = spotifyApiService.fetchSpotifyUserProfile(accessToken);
+        System.out.println("회원 정보 확인 : " + userDTO);
 
         // 3. DB 저장 또는 업데이트
         User user = userRepository.findBySpotifyId(userDTO.getSpotifyId())
