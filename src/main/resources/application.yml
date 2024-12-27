@@ -2,7 +2,7 @@ spring:
   application:
     name: authservice
   profiles:
-    active: dev
+    active: ${SPOTIFY_ACTIVE}
   config:
     import:
       - "configserver:http://admin:1234@localhost:9000"
