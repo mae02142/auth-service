@@ -3,6 +3,7 @@ package com.bookpli.auth_service.controller;
 import com.bookpli.auth_service.common.exception.BaseException;
 import com.bookpli.auth_service.common.response.BaseResponse;
 import com.bookpli.auth_service.common.response.BaseResponseStatus;
+import com.bookpli.auth_service.dto.UserDTO;
 import com.bookpli.auth_service.entity.User;
 import com.bookpli.auth_service.service.AuthService;
 import com.bookpli.auth_service.service.JwtService;
@@ -78,7 +79,7 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/user-info")
+    @GetMapping("/user-pinia")
     public BaseResponse<Map<String, Object>> getUserInfo(@CookieValue(value = "jwt", required = false) String jwt) {
         if (jwt == null || jwt.isEmpty()) {
             // JWT가 없으면 에러 응답 반환
@@ -99,6 +100,25 @@ public class AuthController {
                 "userId", user.getUserId()
         );
         return new BaseResponse<>(userInfo);
+    }
+
+    @GetMapping("/user/{userId}")
+    public BaseResponse<UserDTO> getUserProfile(@PathVariable Long userId){
+        UserDTO response = authService.getUserProfile(userId);
+        return new BaseResponse<>(response);
+    }
+
+    @PatchMapping
+    public BaseResponse<Void> patchNickName(@RequestBody Map<String, Object> request){
+        System.out.println("닉네임 수정 : "+ request);
+        authService.patchNickName(request);
+        return new BaseResponse<>();
+    }
+
+    @GetMapping("/nickname/{nickName}")
+    public BaseResponse<UserDTO> duplicateCheckNickname(@PathVariable String nickName){
+        UserDTO response = authService.duplicateCheckNickname(nickName);
+        return new BaseResponse<>(response);
     }
 
 }
