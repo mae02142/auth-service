@@ -40,10 +40,6 @@ public class SpotifyApiService {
 
     public Map<String, String> requestSpotifyAccessToken(String code) {
         String credentials = Base64.getEncoder().encodeToString((clientId + ":" + clientSecret).getBytes());
-        System.out.println("확인 >>>>>>>>>>>>>>>>>." + credentials);
-
-
-
         return webClient.post()
                 .uri(SPOTIFY_TOKEN_URL)
                 .header("Authorization", "Basic " + credentials)
