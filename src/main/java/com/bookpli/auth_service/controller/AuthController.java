@@ -1,5 +1,9 @@
 package com.bookpli.auth_service.controller;
 
+import com.bookpli.auth_service.common.exception.BaseException;
+import com.bookpli.auth_service.common.response.BaseResponse;
+import com.bookpli.auth_service.common.response.BaseResponseStatus;
+import com.bookpli.auth_service.entity.User;
 import com.bookpli.auth_service.service.AuthService;
 import com.bookpli.auth_service.service.JwtService;
 import jakarta.servlet.http.Cookie;
@@ -7,10 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.Map;
@@ -75,6 +76,29 @@ public class AuthController {
                 ioException.printStackTrace();
             }
         }
+    }
+
+    @GetMapping("/user-info")
+    public BaseResponse<Map<String, Object>> getUserInfo(@CookieValue(value = "jwt", required = false) String jwt) {
+        if (jwt == null || jwt.isEmpty()) {
+            // JWT가 없으면 에러 응답 반환
+            return new BaseResponse<>(BaseResponseStatus.JWT_NOT_FOUND);
+        }
+
+        // JWT 검증 및 디코딩
+        Map<String, Object> decodedToken = jwtService.verifyToken(jwt);
+
+        // 사용자 정보 조회
+        String spotifyId = (String) decodedToken.get("spotifyId");
+        User user = authService.findBySpotifyId(spotifyId)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.USER_NOT_FOUND));
+
+        // 필요한 사용자 정보만 반환
+        Map<String, Object> userInfo = Map.of(
+                "spotifyId", user.getSpotifyId(),
+                "userId", user.getUserId()
+        );
+        return new BaseResponse<>(userInfo);
     }
 
 }

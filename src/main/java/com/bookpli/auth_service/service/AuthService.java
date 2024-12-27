@@ -6,6 +6,7 @@ import com.bookpli.auth_service.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class AuthService {
@@ -58,4 +59,7 @@ public class AuthService {
         );
     }
 
+    public Optional<User> findBySpotifyId(String spotifyId) {
+        return userRepository.findBySpotifyId(spotifyId);
+    }
 }
