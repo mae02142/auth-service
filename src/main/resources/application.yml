@@ -2,10 +2,15 @@ spring:
   application:
     name: authservice
   profiles:
-    active: ${SPOTIFY_ACTIVE:dev-sam}
+    active: ${SPOTIFY_ACTIVE}
   config:
     import:
       - "configserver:http://admin:1234@localhost:9000"
       - "optional:file:.env[.properties]"
   jwt:
     secret-key: ${CUSTOM_JWT_SECRETKEY}
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+    org.springframework.security: WARN

@@ -27,6 +27,7 @@ public class TokenManager {
      * @return 유효한 Access Token
      */
     public String getAccessToken(String spotifyId) {
+        System.out.println("getAccessToken : " + spotifyId);
         return tokenCacheService.getAccessToken(spotifyId, () -> refreshAccessToken(spotifyId));
     }
 

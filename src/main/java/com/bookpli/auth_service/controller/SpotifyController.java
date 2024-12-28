@@ -1,67 +1,60 @@
 package com.bookpli.auth_service.controller;
 
-import com.bookpli.auth_service.client.SpotifyApiClient;
+import com.bookpli.auth_service.service.CustomPrincipal;
+import com.bookpli.auth_service.service.SpotifyAuthService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/spotify")
+@Slf4j
 public class SpotifyController {
 
-    private final SpotifyApiClient spotifyApiClient;
+    private final SpotifyAuthService spotifyAuthService;
 
     @GetMapping("/me/playlists")
     public Map<String, Object> getUserPlaylists() {
-        return spotifyApiClient.sendGetRequest("/me/playlists");
+        System.out.println("SpotifyController 로 도착은 함!!!!!!!!!!");
+        return spotifyAuthService.getUserPlaylists();
     }
 
     @GetMapping("/albums/{albumId}/tracks")
     public Map<String, Object> getAlbumTracks(@PathVariable String albumId) {
-        String endPoint = "/albums/" + albumId + "/tracks";
-        return spotifyApiClient.sendGetRequest(endPoint);
+        return spotifyAuthService.getAlbumTracks(albumId);
     }
 
     @GetMapping("/playlists/{playlistId}/tracks")
     public Map<String, Object> getPlaylistWithMusic(@PathVariable String playlistId) {
-        String endpoint = "/playlists/" + playlistId + "/tracks";
-        return spotifyApiClient.sendGetRequest(endpoint);
+        return spotifyAuthService.getPlaylistWithMusic(playlistId);
     }
 
     @PostMapping("/users/{spotifyId}/playlists")
-    public Map<String, Object> createPlaylist(@PathVariable String spotifyId, @RequestBody Map<String, Object> request) {
-        String endPoint = "/users/" + spotifyId + "/playlists";
-        return spotifyApiClient.sendPostRequest(endPoint, request);
+    public Map<String, Object> createPlaylist(@RequestBody Map<String, Object> request) {
+        return spotifyAuthService.createPlaylist(request);
     }
 
     @PutMapping("/playlists/{playlistId}")
     public void updatePlaylistTitle(@PathVariable String playlistId, @RequestBody Map<String, String> request) {
-        String endPoint = "/playlists/" + playlistId;
-        spotifyApiClient.sendPutRequest(endPoint, request);
+        spotifyAuthService.updatePlaylistTitle(playlistId, request);
     }
 
     @DeleteMapping("/playlists/{playlistId}/followers")
     public void deletePlaylist(@PathVariable String playlistId) {
-        String endPoint = "/playlists/" + playlistId + "/followers";
-        spotifyApiClient.sendDeleteRequestWithoutBody(endPoint);
+        spotifyAuthService.deletePlaylist(playlistId);
     }
 
     @PostMapping("/playlists/{playlistId}/tracks")
     public void addPlaylist(@PathVariable String playlistId, @RequestBody Map<String, Object> request) {
-        String endPoint = "/playlists/" + playlistId + "/tracks";
-        spotifyApiClient.sendPostRequest(endPoint, request);
+        spotifyAuthService.addPlaylist(playlistId, request);
     }
 
     @DeleteMapping("/playlists/{playlistId}/tracks")
-    public void deleteTrack(@PathVariable String playlistId, @RequestBody Map<String, Object> track) {
-        Map<String, Object> request = Map.of(
-                "tracks", List.of(Map.of("uri", track.get("uri")))
-        );
-        String endPoint = "/playlists/" + playlistId + "/tracks";
-        spotifyApiClient.sendDeleteRequest(endPoint, request);
+    public void deleteTrack(@PathVariable String playlistId, @RequestBody Map<String, Object> request) {
+        spotifyAuthService.deleteTrack(playlistId, request);
     }
 }
-

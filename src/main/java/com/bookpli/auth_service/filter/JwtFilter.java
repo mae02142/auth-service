@@ -44,8 +44,15 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        String jwt = extractJwtFromCookies(request);
-        log.debug("필터 추출 jwt: {}", jwt);
+        // 헤더에서 먼저 JWT 확인
+        String jwt = extractJwtFromHeader(request);
+
+        // 헤더에 없다면 쿠키에서 확인
+        if (jwt == null) {
+            jwt = extractJwtFromCookies(request);
+        }
+
+        log.debug("추출된 JWT: {}", jwt);
 
         if (jwt == null) {
             log.debug("JWT 토큰이 존재하지 않습니다. 401 Unauthorized 반환");
@@ -80,6 +87,17 @@ public class JwtFilter extends OncePerRequestFilter {
                 .map(Cookie::getValue)
                 .findFirst()
                 .orElse(null);
+    }
+
+    /**
+     * Header에서 JWT 추출
+     */
+    private String extractJwtFromHeader(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
     }
 
     /**
