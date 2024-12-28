@@ -9,3 +9,8 @@ spring:
       - "optional:file:.env[.properties]"
   jwt:
     secret-key: ${CUSTOM_JWT_SECRETKEY}
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+    org.springframework.security: WARN
