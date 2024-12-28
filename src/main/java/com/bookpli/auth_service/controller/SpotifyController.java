@@ -1,12 +1,12 @@
 package com.bookpli.auth_service.controller;
 
-import com.bookpli.auth_service.service.CustomPrincipal;
 import com.bookpli.auth_service.service.SpotifyAuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -19,7 +19,6 @@ public class SpotifyController {
 
     @GetMapping("/me/playlists")
     public Map<String, Object> getUserPlaylists() {
-        System.out.println("SpotifyController 로 도착은 함!!!!!!!!!!");
         return spotifyAuthService.getUserPlaylists();
     }
 
@@ -55,6 +54,9 @@ public class SpotifyController {
 
     @DeleteMapping("/playlists/{playlistId}/tracks")
     public void deleteTrack(@PathVariable String playlistId, @RequestBody Map<String, Object> request) {
-        spotifyAuthService.deleteTrack(playlistId, request);
+        Map<String, Object> formattedRequest = new HashMap<>();
+        // tracks를 배열로 감싸서 전송
+        formattedRequest.put("tracks", List.of(request.get("tracks")));
+        spotifyAuthService.deleteTrack(playlistId, formattedRequest);
     }
 }
