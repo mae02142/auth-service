@@ -46,10 +46,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // 헤더에서 먼저 JWT 확인
         String jwt = extractJwtFromHeader(request);
+        log.debug("Authorization 헤더에서 JWT 추출: {}", jwt);
 
         // 헤더에 없다면 쿠키에서 확인
         if (jwt == null) {
             jwt = extractJwtFromCookies(request);
+            log.debug("쿠키에서 JWT 추출: {}", jwt);
         }
 
         log.debug("추출된 JWT: {}", jwt);
@@ -120,9 +122,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // SecurityContext에 저장
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        // 인증 정보 확인 로그
-        System.out.println("Authentication set: " + authentication);
     }
 
 }

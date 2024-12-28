@@ -20,7 +20,6 @@ public class TokenController {
     @GetMapping("/accessToken/{spotifyId}")
     public BaseResponse<String> getAccessToken(@PathVariable String spotifyId) {
         String accessToken = tokenManager.getAccessToken(spotifyId);
-        System.out.println(accessToken);
         return new BaseResponse<>(accessToken);
     }
 }

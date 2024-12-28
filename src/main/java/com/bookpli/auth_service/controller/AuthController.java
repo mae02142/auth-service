@@ -113,7 +113,6 @@ public class AuthController {
 
     @PatchMapping
     public BaseResponse<Void> patchNickName(@RequestBody Map<String, Object> request){
-        System.out.println("닉네임 수정 : "+ request);
         authService.patchNickName(request);
         return new BaseResponse<>();
     }
