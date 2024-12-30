@@ -50,6 +50,9 @@ public class JwtService {
         if (token == null || token.isEmpty()) {
             throw new IllegalArgumentException("유효하지 않은 JWT 토큰");
         }
+        if (token.split("\\.").length != 3) {
+            throw new MalformedJwtException("토큰 형식이 JWT가 아님");
+        }
 
         try {
             return Jwts.parserBuilder()
